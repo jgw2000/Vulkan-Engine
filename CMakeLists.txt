@@ -1,7 +1,7 @@
 # ==================================================================================================
 # CMake
 # ==================================================================================================
-cmake_minimum_required(VERSION 4.2.1)
+cmake_minimum_required(VERSION 3.31.4)
 
 # ==================================================================================================
 # Project declaration
@@ -36,7 +36,8 @@ add_subdirectory(${EXTERNAL}/glm)
 add_subdirectory(${ENGINE})
 
 target_include_directories(Engine PUBLIC ${EXTERNAL})
-target_link_libraries(Engine PUBLIC glm-header-only)
+target_link_libraries(Engine PUBLIC glm)
+set_property(TARGET glm PROPERTY FOLDER "ThirdParty")
 
 if (IS_HOST_PLATFORM)
 endif()
