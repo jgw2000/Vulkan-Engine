@@ -1,4 +1,4 @@
-#include "application/App.h"
+#include "Application/App.h"
 using namespace VE;
 
 int main()

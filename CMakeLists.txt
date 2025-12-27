@@ -15,12 +15,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 #  Paths
 # ==================================================================================================
 # Where our external libs are
-set(EXTERNAL ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
+set(EXTERNAL ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty)
 
 # Where our engine code is
-set(ENGINE ${CMAKE_CURRENT_SOURCE_DIR}/engine)
+set(ENGINE ${CMAKE_CURRENT_SOURCE_DIR}/Engine)
 
-set(SAMPLE ${CMAKE_CURRENT_SOURCE_DIR}/samples)
+set(SAMPLE ${CMAKE_CURRENT_SOURCE_DIR}/Samples)
 
 # ==================================================================================================
 # OS specific
@@ -32,8 +32,11 @@ endif()
 # ==================================================================================================
 # Sub-projects
 # ==================================================================================================
-
+add_subdirectory(${EXTERNAL}/glm)
 add_subdirectory(${ENGINE})
+
+target_include_directories(Engine PUBLIC ${EXTERNAL})
+target_link_libraries(Engine PUBLIC glm-header-only)
 
 if (IS_HOST_PLATFORM)
 endif()
