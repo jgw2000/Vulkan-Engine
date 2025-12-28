@@ -32,18 +32,20 @@ endif()
 # ==================================================================================================
 # Sub-projects
 # ==================================================================================================
-add_subdirectory(${EXTERNAL}/glm)
+set(SDL_STATIC ON CACHE BOOL "" FORCE)
 add_subdirectory(${EXTERNAL}/sdl)
+add_subdirectory(${EXTERNAL}/glm)
 add_subdirectory(${ENGINE})
 
 target_include_directories(Engine PUBLIC ${EXTERNAL})
 target_link_libraries(Engine PUBLIC glm)
-target_link_libraries(Engine PUBLIC SDL3::SDL3)
+target_link_libraries(Engine PUBLIC SDL3::SDL3-static)
 
 set_property(TARGET glm PROPERTY FOLDER "ThirdParty")
 set_property(TARGET SDL_uclibc PROPERTY FOLDER "ThirdParty")
 set_property(TARGET SDL3_test PROPERTY FOLDER "ThirdParty")
 set_property(TARGET SDL3-shared PROPERTY FOLDER "ThirdParty")
+set_property(TARGET SDL3-static PROPERTY FOLDER "ThirdParty")
 
 if (IS_HOST_PLATFORM)
 endif()
