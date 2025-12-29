@@ -1,8 +1,8 @@
 #include "Application/App.h"
-using namespace VE;
 
 int main()
 {
-    App::get().Run();
+    VE::Config config;
+    VE::App::Get().Run(config);
     return 0;
 }

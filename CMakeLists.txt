@@ -37,7 +37,6 @@ add_subdirectory(${EXTERNAL}/sdl)
 add_subdirectory(${EXTERNAL}/glm)
 add_subdirectory(${ENGINE})
 
-target_include_directories(Engine PUBLIC ${EXTERNAL})
 target_link_libraries(Engine PUBLIC glm)
 target_link_libraries(Engine PUBLIC SDL3::SDL3-static)
 
