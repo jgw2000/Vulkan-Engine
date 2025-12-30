@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <Platform/Platform.h>
+#include <Platform/Types.h>
 
 namespace VE {
 struct Config {

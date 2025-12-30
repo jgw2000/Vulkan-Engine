@@ -2,7 +2,7 @@
 
 #include <SDL3/SDL.h>
 
-#include <Platform/Platform.h>
+#include <Platform/Types.h>
 #include <Application/Config.h>
 
 namespace VE {
