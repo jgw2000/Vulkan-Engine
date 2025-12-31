@@ -3,7 +3,18 @@
 #include <SDL3/SDL.h>
 
 #include <Platform/Types.h>
+
+#include <Function/Engine.h>
+
 #include <Application/Config.h>
+
+namespace VE::backend {
+
+#if defined(BACKEND_SUPPORTS_VULKAN)
+class VulkanPlatform;
+#endif
+
+}
 
 namespace VE {
 
@@ -41,10 +52,15 @@ private:
     };
 
     friend class Window;
+    void initSDL();
 
-    void InitSDL();
+    Engine* engine = nullptr;
 
     bool is_closed = false;
+
+#if defined(BACKEND_SUPPORTS_VULKAN)
+    backend::VulkanPlatform* vulkan_platform = nullptr;
+#endif
 };
 
 } // namespace VE

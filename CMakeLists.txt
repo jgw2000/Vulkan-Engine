@@ -32,6 +32,9 @@ endif()
 # ==================================================================================================
 # Sub-projects
 # ==================================================================================================
+find_package(Vulkan REQUIRED volk SPIRV-Tools)
+include_directories(${Vulkan_INCLUDE_DIR})
+
 set(SDL_STATIC ON CACHE BOOL "" FORCE)
 add_subdirectory(${EXTERNAL}/sdl)
 add_subdirectory(${EXTERNAL}/glm)

@@ -1,6 +1,11 @@
 #include "App.h"
 
+#include <cassert>
 #include <memory>
+
+#include <Platform/Platform.h>
+
+#include <Core/Backend/Vulkan/VulkanPlatform.h>
 
 namespace VE {
 
@@ -13,7 +18,7 @@ App& App::Get() {
 }
 
 App::App() {
-    InitSDL();
+    initSDL();
 }
 
 App::~App() {
@@ -45,9 +50,15 @@ void App::Run(const Config& config) {
             }
         }
     }
+
+#if defined(BACKEND_SUPPORTS_VULKAN)
+    if (vulkan_platform) {
+        delete vulkan_platform;
+    }
+#endif
 }
 
-void App::InitSDL() {
+void App::initSDL() {
     SDL_Init(SDL_INIT_EVENTS);
 }
 
@@ -56,16 +67,42 @@ void App::InitSDL() {
 // ------------------------------------------------------------------------------------------------
 App::Window::Window(App* app, const Config& config)
     : app(app), config(config) {
-    u32 window_flags = SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_VULKAN;
+    u32 windowFlags = SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_VULKAN;
     if (config.resizeable) {
-        window_flags |= SDL_WINDOW_RESIZABLE;
+        windowFlags |= SDL_WINDOW_RESIZABLE;
     }
 
     if (config.headless) {
-        window_flags |= SDL_WINDOW_HIDDEN;
+        windowFlags |= SDL_WINDOW_HIDDEN;
     }
 
-    sdl_window = SDL_CreateWindow(config.title.c_str(), config.width, config.height, window_flags);
+    sdl_window = SDL_CreateWindow(config.title.c_str(), config.width, config.height, windowFlags);
+    assert(sdl_window  && "SDL create window failed!");
+
+    const auto createEngine = [&config, this]() {
+        backend::Platform* platform = nullptr;
+#if defined(BACKEND_SUPPORTS_VULKAN)
+        if (config.backend == Engine::Backend::VULKAN) {
+            platform = this->app->vulkan_platform = new backend::VulkanPlatform();
+        }
+#endif
+
+        Engine::Builder builder = Engine::Builder();
+
+        return builder.Backend(config.backend)
+                .FeatureLevel(config.feature_level)
+                .Platform(platform)
+                .Build();
+    };
+
+    if (config.headless) {
+
+    }
+    else {
+        app->engine = createEngine();
+        width = config.width;
+        height = config.height;
+    }
 }
 
 App::Window::~Window() {
