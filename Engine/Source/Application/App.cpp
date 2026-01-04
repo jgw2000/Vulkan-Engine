@@ -51,6 +51,9 @@ void App::Run(const Config& config) {
         }
     }
 
+    Engine::Destroy(engine);
+    engine = nullptr;
+
 #if defined(BACKEND_SUPPORTS_VULKAN)
     if (vulkan_platform) {
         delete vulkan_platform;

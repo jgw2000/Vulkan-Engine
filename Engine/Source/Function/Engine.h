@@ -2,7 +2,7 @@
 
 #include <Platform/Platform.h>
 
-#include <Core/DriverEnums.h>
+#include <Core/Backend/DriverEnums.h>
 #include <Core/PrivateImplementation-impl.h>
 
 namespace VE {
@@ -83,6 +83,17 @@ public:
          */
         Engine* Build() const;
     };
+
+    inline static Engine* Create(Backend backend = Backend::DEFAULT,
+        Platform* platform = nullptr,
+        void* sharedContext = nullptr) {
+        return Builder()
+            .Backend(backend)
+            .Platform(platform)
+            .Build();
+    }
+
+    static void Destroy(Engine* engine);
 
 protected:
     Engine() noexcept = default;

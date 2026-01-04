@@ -12,7 +12,12 @@ class Driver;
 class Platform {
 public:
     struct DriverConfig {
-
+        /**
+         * Bypass the staging buffer because the device is of Unified Memory Architecture.
+         * This is only supported for:
+         *      - VulkanPlatform
+         */
+        bool staging_buffer_bypass_enabled = false;
     };
 
     Platform() noexcept;

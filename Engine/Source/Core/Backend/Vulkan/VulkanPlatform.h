@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_set>
 
+#define VK_USE_PLATFORM_WIN32_KHR 1
 #include <Volk/volk.h>
 
 #include <Platform/Types.h>
@@ -58,7 +59,7 @@ public:
          *        `vkEnumeratePhysicalDevices`. -1 by default to indicate no preference.
          */
         struct GPUPreference {
-            cstring device_name;
+            std::string device_name;
             i8 index = -1;
         } gpu;
 
@@ -83,6 +84,8 @@ public:
     virtual Customization GetCustomization() const noexcept {
         return {};
     }
+
+    virtual ExtensionSet GetRequiredInstanceExtensions() { return {}; }
 
 protected:
     /**
@@ -110,8 +113,36 @@ protected:
      */
     virtual VkPhysicalDevice selectVkPhysicalDevice(VkInstance instance) noexcept;
 
+    /**
+     * Creates the VkDevice used by Vulkan backend.
+     *
+     * This method can be overridden in subclasses to customize VkDevice creation, such as
+     * adding application-specific extensions or enabling features.
+     *
+     * The provided `createInfo` contains extensions and features required by Engine.
+     * If you override this method and need to modify the `createInfo` struct, you must first
+     * make a copy of it and modify the copy.
+     *
+     * @param createInfo The VkDeviceCreateInfo prepared by Engine.
+     * @return The created VkDevice, or VK_NULL_HANDLE on failure.
+     */
+    virtual VkDevice createVkDevice(const VkDeviceCreateInfo& createInfo) noexcept;
+
 private:
     void createInstance(const ExtensionSet& requiredExts) noexcept;
+
+    void queryAndSetDeviceFeature(
+        const Platform::DriverConfig& driverConfig,
+        const ExtensionSet& instExts, const ExtensionSet& deviceExts,
+        void* sharedContex) noexcept;
+
+    void createLogicalDeviceAndQueues(
+        const ExtensionSet& deviceExtensions,
+        const VkPhysicalDeviceFeatures& features,
+        const VkPhysicalDeviceVulkan11Features vk11Features,
+        bool createProtectedQueue) noexcept;
+
+    friend struct VulkanPlatformPrivate;
 };
 
 } // namespace VE::backend
