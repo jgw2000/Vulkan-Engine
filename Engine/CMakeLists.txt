@@ -1,9 +1,10 @@
-file(GLOB_RECURSE SRC_FILES Source/*.c??)
-file(GLOB_RECURSE HEADER_FILES Source/*.h)
+file(GLOB_RECURSE SRC_FILES Src/*.c??)
+file(GLOB_RECURSE HEADER_FILES Inc/*.h)
 
-add_library(Engine ${SRC_FILES} ${HEADER_FILES})
+add_library(VE ${SRC_FILES} ${HEADER_FILES})
 
-target_compile_definitions(Engine PRIVATE BACKEND_SUPPORTS_VULKAN)
-target_include_directories(Engine PUBLIC Source)
+target_include_directories(VE PUBLIC Inc)
+target_link_libraries(VE PUBLIC Vulkan::Vulkan)
+target_link_libraries(VE PUBLIC glfw)
 
 source_group(TREE ${PROJECT_SOURCE_DIR}/Engine FILES ${SRC_FILES} ${HEADER_FILES})
