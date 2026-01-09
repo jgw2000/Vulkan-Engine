@@ -1,16 +1,17 @@
 #pragma once
 
-#include <memory>
-
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include <cstdint>
 
 #include "Core/Singleton.h"
 
+class GLFWwindow;
+
 namespace VE {
 
+class VulkanEngine;
+
 /**
- * Farcade | Singleton
+ * Facade | Singleton
  *
  * Manage the application's main loop logic
  */
@@ -25,6 +26,10 @@ private:
 
 private:
     GLFWwindow* mWindow = nullptr;
+    uint16_t mWidth = 800;
+    uint16_t mHeight = 600;
+
+    VulkanEngine* mEngine = nullptr;
 };
 
 }

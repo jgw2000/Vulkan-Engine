@@ -1,11 +1,11 @@
 #include "Application.h"
 
-#include <cstdint>
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+
+#include "VulkanEngine.h"
 
 namespace VE {
-
-constexpr uint16_t WIDTH = 800;
-constexpr uint16_t HEIGHT = 600;
 
 // -----------------------------------------------------------------------------------------------
 // Application
@@ -30,8 +30,13 @@ bool Application::initialize() {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    mWindow = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan Engine", nullptr, nullptr);
+    mWindow = glfwCreateWindow(mWidth, mHeight, "Vulkan Engine", nullptr, nullptr);
     if (!mWindow) {
+        return false;
+    }
+
+    mEngine = new VulkanEngine();
+    if (!mEngine->Initialize()) {
         return false;
     }
 
@@ -47,6 +52,10 @@ void Application::mainLoop() {
 void Application::cleanup() {
     glfwDestroyWindow(mWindow);
     glfwTerminate();
+
+    if (mEngine) {
+        delete mEngine;
+    }
 }
 
 }
