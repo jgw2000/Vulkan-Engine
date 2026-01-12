@@ -5,8 +5,8 @@ namespace VE {
 // -----------------------------------------------------------------------------------------------
 // VulkanEngine
 // -----------------------------------------------------------------------------------------------
-bool VulkanEngine::Initialize() {
-    mContext = std::make_unique<VulkanContext>();
+bool VulkanEngine::Initialize(void* window) {
+    mContext = std::make_unique<VulkanContext>(window);
     return true;
 }
 

@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
+#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -45,13 +45,49 @@ uint32_t FindQueueFamilies(const vk::raii::PhysicalDevice& physicalDevice, vk::Q
 
 }
 
+vk::SurfaceFormatKHR ChooseSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& availableFormats) {
+    for (const auto& availableFormat : availableFormats) {
+        if (availableFormat.format == vk::Format::eB8G8R8A8Srgb && availableFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
+            return availableFormat;
+        }
+    }
+
+    return availableFormats[0];
+}
+
+vk::PresentModeKHR ChooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& availablePresentModes) {
+    for (const auto& mode : availablePresentModes) {
+        if (mode == vk::PresentModeKHR::eMailbox) {
+            return mode;
+        }
+    }
+
+    return vk::PresentModeKHR::eFifo;
+}
+
+vk::Extent2D ChooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities, void* window) {
+    if (capabilities.currentExtent.width != UINT32_MAX) {
+        return capabilities.currentExtent;
+    }
+
+    int width, height;
+    glfwGetFramebufferSize(static_cast<GLFWwindow*>(window), &width, &height);
+
+    return {
+        std::clamp<uint32_t>(width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width),
+        std::clamp<uint32_t>(height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height)
+    };
+}
+
 // -----------------------------------------------------------------------------------------------
 // VulkanContext
 // -----------------------------------------------------------------------------------------------
-VulkanContext::VulkanContext() {
+VulkanContext::VulkanContext(void* window) {
     createInstance();
     selectPhysicalDevice();
     createLogicalDevice();
+    createSurface(window);
+    createSwapchain(window);
 }
 
 void VulkanContext::createInstance() {
@@ -149,6 +185,59 @@ void VulkanContext::createLogicalDevice() {
 
     mDevice = vk::raii::Device(mPhysicalDevice, deviceCreateInfo);
     mGraphicsQueue = vk::raii::Queue(mDevice, graphicsQueueFamilyIndex, 0);
+}
+
+void VulkanContext::createSurface(void* window) {
+    VkSurfaceKHR surface;
+    if (glfwCreateWindowSurface(*mInstance, static_cast<GLFWwindow*>(window), nullptr, &surface)) {
+        throw std::runtime_error("failed to create window surface!");
+    }
+
+    mSurface = vk::raii::SurfaceKHR(mInstance, surface);
+}
+
+void VulkanContext::createSwapchain(void* window) {
+    auto surfaceCapabilities = mPhysicalDevice.getSurfaceCapabilitiesKHR(*mSurface);
+    mSwapFormat = ChooseSurfaceFormat(mPhysicalDevice.getSurfaceFormatsKHR(*mSurface));
+    mSwapExtent = ChooseSwapExtent(surfaceCapabilities, window);
+
+    uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
+    if (surfaceCapabilities.maxImageCount > 0 && surfaceCapabilities.maxImageCount < imageCount) {
+        imageCount = surfaceCapabilities.maxImageCount;
+    }
+
+    vk::SwapchainCreateInfoKHR swapchainCreateInfo {
+        .flags = {},
+        .surface = *mSurface,
+        .minImageCount = imageCount,
+        .imageFormat = mSwapFormat.format,
+        .imageColorSpace = mSwapFormat.colorSpace,
+        .imageExtent = mSwapExtent,
+        .imageArrayLayers = 1,
+        .imageUsage = vk::ImageUsageFlagBits::eColorAttachment,
+        .imageSharingMode = vk::SharingMode::eExclusive,
+        .preTransform = surfaceCapabilities.currentTransform,
+        .compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque,
+        .presentMode = ChooseSwapPresentMode(mPhysicalDevice.getSurfacePresentModesKHR(*mSurface)),
+        .clipped = true,
+        .oldSwapchain = nullptr
+    };
+
+    mSwapchain = vk::raii::SwapchainKHR(mDevice, swapchainCreateInfo);
+    mSwapchainImages = mSwapchain.getImages();
+
+    // Create image views
+    vk::ImageViewCreateInfo imageViewCreateInfo {
+        .viewType = vk::ImageViewType::e2D,
+        .format = mSwapFormat.format,
+        .components = {},
+        .subresourceRange = { vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1 }
+    };
+
+    for (auto image : mSwapchainImages) {
+        imageViewCreateInfo.image = image;
+        mSwapchainImageViews.emplace_back(mDevice, imageViewCreateInfo);
+    }
 }
 
 }

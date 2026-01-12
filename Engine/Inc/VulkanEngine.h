@@ -11,7 +11,7 @@ namespace VE {
  */
 class VulkanEngine {
 public:
-    bool Initialize();
+    bool Initialize(void* window);
 
 private:
     std::unique_ptr<VulkanContext> mContext;

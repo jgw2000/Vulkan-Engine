@@ -36,7 +36,7 @@ bool Application::initialize() {
     }
 
     mEngine = new VulkanEngine();
-    if (!mEngine->Initialize()) {
+    if (!mEngine->Initialize(mWindow)) {
         return false;
     }
 
