@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "Core/Singleton.h"
+#include <Core/Singleton.h>
 
 class GLFWwindow;
 
@@ -23,6 +23,7 @@ private:
     bool initialize();
     void mainLoop();
     void cleanup();
+    void render();
 
 private:
     GLFWwindow* mWindow = nullptr;

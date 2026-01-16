@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <VulkanContext.h>
+#include <Graphics/VulkanContext.h>
 
 namespace VE {
 
@@ -12,9 +12,10 @@ namespace VE {
 class VulkanEngine {
 public:
     bool Initialize(void* window);
+    void Render();
 
 private:
-    std::unique_ptr<VulkanContext> mContext;
+    std::unique_ptr<Gfx::VulkanContext> mContext;
 };
 
 }

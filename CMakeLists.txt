@@ -11,8 +11,9 @@ find_package(Vulkan REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
-#target_compile_definitions(VulkanCppModule PUBLIC VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1 VULKAN_HPP_NO_STRUCT_CONSTRUCTORS=1)
-#target_include_directories(VulkanCppModule PUBLIC "${Vulkan_INCLUDE_DIR}")
+find_program(SLANGC_EXECUTABLE slangc HINTS $ENV{VULKAN_SDK}/bin REQUIRED)
+
+include_directories(${Vulkan_INCLUDE_DIR})
 
 # Where our engine code is
 set(ENGINE ${CMAKE_CURRENT_SOURCE_DIR}/Engine)
@@ -25,7 +26,6 @@ add_subdirectory(${SAMPLE}/Triangle)
 # Sub-projects
 # ==================================================================================================
 #find_package(Vulkan REQUIRED volk SPIRV-Tools)
-include_directories(${Vulkan_INCLUDE_DIR})
 
 #set(SDL_STATIC ON CACHE BOOL "" FORCE)
 #add_subdirectory(${EXTERNAL}/sdl)

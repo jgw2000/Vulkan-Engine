@@ -45,3 +45,6 @@
 
 # build files
 Build
+
+# compiled shader files
+*.spv

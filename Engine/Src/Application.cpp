@@ -1,9 +1,9 @@
-#include "Application.h"
+#include <Application.h>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include "VulkanEngine.h"
+#include <VulkanEngine.h>
 
 namespace VE {
 
@@ -28,7 +28,6 @@ bool Application::initialize() {
     }
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
     mWindow = glfwCreateWindow(mWidth, mHeight, "Vulkan Engine", nullptr, nullptr);
     if (!mWindow) {
@@ -46,6 +45,7 @@ bool Application::initialize() {
 void Application::mainLoop() {
     while (!glfwWindowShouldClose(mWindow)) {
         glfwPollEvents();
+        render();
     }
 }
 
@@ -56,6 +56,10 @@ void Application::cleanup() {
     if (mEngine) {
         delete mEngine;
     }
+}
+
+void Application::render() {
+    mEngine->Render();
 }
 
 }

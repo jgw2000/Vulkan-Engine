@@ -9,3 +9,11 @@ target_link_libraries(VE PUBLIC Vulkan::Vulkan)
 target_link_libraries(VE PUBLIC glfw)
 
 source_group(TREE ${PROJECT_SOURCE_DIR}/Engine FILES ${SRC_FILES} ${HEADER_FILES})
+
+# Compile shader
+set(SHADERS_DIR ${PROJECT_SOURCE_DIR}/Assets/Shader)
+set(ENTRY_POINTS -entry vertMain -entry fragMain)
+execute_process(
+    COMMAND ${SLANGC_EXECUTABLE} ${SHADERS_DIR}/triangle.slang -target spirv -profile spirv_1_4 -emit-spirv-directly -fvk-use-entrypoint-name ${ENTRY_POINTS} -o triangle.spv
+    WORKING_DIRECTORY ${SHADERS_DIR}
+)

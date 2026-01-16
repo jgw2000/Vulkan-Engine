@@ -1,4 +1,4 @@
-#include "VulkanEngine.h"
+#include <VulkanEngine.h>
 
 namespace VE {
 
@@ -6,8 +6,12 @@ namespace VE {
 // VulkanEngine
 // -----------------------------------------------------------------------------------------------
 bool VulkanEngine::Initialize(void* window) {
-    mContext = std::make_unique<VulkanContext>(window);
+    mContext = std::make_unique<Gfx::VulkanContext>(window);
     return true;
+}
+
+void VulkanEngine::Render() {
+    mContext->Render();
 }
 
 }

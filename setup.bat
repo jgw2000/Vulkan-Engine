@@ -28,6 +28,6 @@ echo All dependencies have been installed successfully!
 echo You can now use CMake to build your Vulkan project.
 echo.
 
-cmake -B Build -S .
+./cmake_build.bat
 
 exit /b 0
